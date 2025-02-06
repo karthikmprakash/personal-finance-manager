@@ -140,35 +140,38 @@ if st.button("Delete Expense"):
 remaining_budget = budget_controller.get_remaining_budget()
 st.subheader(f"Remaining Budget: ₹{remaining_budget}")
 
-# Display expenses by category
-st.subheader("Expenses by Category")
-expenses_by_category = budget_controller.get_expenses_by_category()
-expenses_by_category_df = pd.DataFrame(
-    list(expenses_by_category.items()), columns=["Category", "Amount"]
-)
-st.bar_chart(expenses_by_category_df.set_index("Category"))
-
-# Display pie charts side by side
-st.subheader("Expense Distribution")
-col1, col2 = st.columns(2)
-
-with col1:
-    st.write("By Category")
-    fig, ax = plt.subplots()
-    expenses_by_category["Remaining Budget"] = remaining_budget
-    ax.pie(
-        expenses_by_category.values(),
-        labels=expenses_by_category.keys(),
-        autopct="%1.1f%%",
+if len(expensedf) < 1:
+    st.toast("There are no expenses!")
+else:
+    # Display expenses by category
+    st.subheader("Expenses by Category")
+    expenses_by_category = budget_controller.get_expenses_by_category()
+    expenses_by_category_df = pd.DataFrame(
+        list(expenses_by_category.items()), columns=["Category", "Amount"]
     )
-    ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
-    st.pyplot(fig)
-
-with col2:
-    st.write("By Name")
-    expenses_by_name = {expense[1]: expense[2] for expense in expenses}
-    expenses_by_name["Remaining Budget"] = remaining_budget
-    fig, ax = plt.subplots()
-    ax.pie(expenses_by_name.values(), labels=expenses_by_name.keys(), autopct="%1.1f%%")
-    ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
-    st.pyplot(fig)
+    st.bar_chart(expenses_by_category_df.set_index("Category"))
+    
+    # Display pie charts side by side
+    st.subheader("Expense Distribution")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("By Category")
+        fig, ax = plt.subplots()
+        expenses_by_category["Remaining Budget"] = remaining_budget
+        ax.pie(
+            expenses_by_category.values(),
+            labels=expenses_by_category.keys(),
+            autopct="%1.1f%%",
+        )
+        ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+        st.pyplot(fig)
+    
+    with col2:
+        st.write("By Name")
+        expenses_by_name = {expense[1]: expense[2] for expense in expenses}
+        expenses_by_name["Remaining Budget"] = remaining_budget
+        fig, ax = plt.subplots()
+        ax.pie(expenses_by_name.values(), labels=expenses_by_name.keys(), autopct="%1.1f%%")
+        ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+        st.pyplot(fig)
